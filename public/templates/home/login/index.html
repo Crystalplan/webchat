@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Login</title>
     <!-- Bootstrap 核心CSS -->
-    <link rel="stylesheet" href="../static/bootstrap/4.1.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="../static/bootstrap/4.1.1/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../../../static/bootstrap/4.1.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../../static/bootstrap/4.1.1/css/font-awesome.min.css">
     <style>
         .card {
             width: 500px;
@@ -16,13 +16,13 @@
             transform: translate(-50%, -50%);
         }
 
-        #verifyCode {
+        #captcha {
             width: 300px;
             float: left;
             margin-right: 15px;
         }
 
-        #verifyImg {
+        #captchaImg {
             width: 120px;
             height: 50px;
             cursor: pointer;
@@ -33,7 +33,7 @@
 <div class="container">
     <div class="card">
         <div class="card-header text-center">
-            <img src="../static/images/home/chatIcon.jpg" alt="webchat" width="121" height="75">
+            <img src="../../../static/images/home/chatIcon.jpg" alt="webchat" width="121" height="75">
         </div>
         <div class="card-body">
             <form>
@@ -44,8 +44,8 @@
                     <input type="password" class="form-control" id="pwd" placeholder="密码">
                 </div>
                 <div class="form-group">
-                    <input type="verifyCode" class="form-control" id="verifyCode" placeholder="验证码">
-                    <img src="../static/images/home/verifyCode.png" id="verifyImg" onclick=""/>
+                    <input type="captcha" class="form-control" id="captcha" placeholder="验证码">
+                    <img src="#" id="captchaImg" onclick="javascript:getCaptcha(this)"/>
                 </div>
                 <div class="form-check">
                     <label class="form-check-label">
@@ -58,7 +58,20 @@
     </div>
 </div>
 <!-- Bootstrap 核心 JavaScript -->
-<script src="../static/js/jquery-3.3.1.min.js"></script>
-<script src="../static/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<script src="../../../static/js/common.js"></script>
+<script src="../../../static/js/jquery-3.3.1.min.js"></script>
+<script src="../../../static/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<script>
+    $(function () {
+        getCaptcha('#captchaImg');
+    });
+
+    /**
+     * 获取验证码
+     */
+    function getCaptcha($img) {
+        $($img).attr('src', baseUrl + 'home/login/getCaptcha' + '?rand=' + Math.random());
+    }
+</script>
 </body>
 </html>

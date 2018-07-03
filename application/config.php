@@ -15,7 +15,7 @@ return [
     // +----------------------------------------------------------------------
 
     // 应用调试模式
-    'app_debug'              => false,
+    'app_debug'              => true,
     // 应用Trace
     'app_trace'              => false,
     // 应用模式状态
@@ -119,30 +119,30 @@ return [
     // | 模板设置
     // +----------------------------------------------------------------------
 
-    'template'               => [
+    'template' => [
         // 模板引擎类型 支持 php think 支持扩展
-        'type'         => 'Think',
+        'type' => 'Think',
         // 模板路径
-        'view_path'    => '',
+        'view_path' => '',
         // 模板后缀
-        'view_suffix'  => 'html',
+        'view_suffix' => 'html',
         // 模板文件名分隔符
-        'view_depr'    => DS,
+        'view_depr' => DS,
         // 模板引擎普通标签开始标记
-        'tpl_begin'    => '{',
+        'tpl_begin' => '{',
         // 模板引擎普通标签结束标记
-        'tpl_end'      => '}',
+        'tpl_end' => '}',
         // 标签库标签开始标记
         'taglib_begin' => '{',
         // 标签库标签结束标记
-        'taglib_end'   => '}',
+        'taglib_end' => '}',
     ],
 
     // 视图输出字符串内容替换
-    'view_replace_str'       => [],
+    'view_replace_str' => [],
     // 默认跳转页面对应的模板文件
-    'dispatch_success_tmpl'  => THINK_PATH . 'tpl' . DS . 'dispatch_jump.tpl',
-    'dispatch_error_tmpl'    => THINK_PATH . 'tpl' . DS . 'dispatch_jump.tpl',
+    'dispatch_success_tmpl' => THINK_PATH . 'tpl' . DS . 'dispatch_jump.tpl',
+    'dispatch_error_tmpl' => THINK_PATH . 'tpl' . DS . 'dispatch_jump.tpl',
 
     // +----------------------------------------------------------------------
     // | 异常及错误设置
