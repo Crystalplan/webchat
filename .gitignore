@@ -3,3 +3,5 @@
 composer.lock
 *.log
 runtime
+application/config.php
+application/dev.php
