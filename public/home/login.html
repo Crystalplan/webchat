@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Login</title>
     <!-- Bootstrap 核心CSS -->
-    <link rel="stylesheet" href="../../../static/bootstrap/4.1.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="../../../static/bootstrap/4.1.1/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../static/bootstrap/4.1.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../static/bootstrap/4.1.1/css/font-awesome.min.css">
     <style>
         .card {
             width: 500px;
@@ -33,9 +33,10 @@
 <div class="container">
     <div class="card">
         <div class="card-header text-center">
-            <img src="../../../static/images/home/chatIcon.jpg" alt="webchat" width="121" height="75">
+            <img src="../static/images/home/chatIcon.jpg" alt="webchat" width="121" height="75">
         </div>
         <div class="card-body">
+            <div id="alertTip"></div>
             <form>
                 <div class="form-group">
                     <input type="username" class="form-control" id="username" placeholder="用户名">
@@ -52,15 +53,16 @@
                         <input class="form-check-input" type="checkbox"> 记住我
                     </label>
                 </div>
-                <button type="submit" class="btn btn-primary btn-lg btn-block">登录</button>
+                <button type="button" class="btn btn-primary btn-lg btn-block" id="login">登录</button>
             </form>
         </div>
     </div>
 </div>
 <!-- Bootstrap 核心 JavaScript -->
-<script src="../../../static/js/common.js"></script>
-<script src="../../../static/js/jquery-3.3.1.min.js"></script>
-<script src="../../../static/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<script src="../static/js/jquery-3.3.1.min.js"></script>
+<script src="../static/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<script src="../static/js/common.js"></script>
+<script src="../static/js/crypto-js.js"></script>
 <script>
     $(function () {
         getCaptcha('#captchaImg');
@@ -72,6 +74,44 @@
     function getCaptcha($img) {
         $($img).attr('src', baseUrl + 'home/login/getCaptcha' + '?rand=' + Math.random());
     }
+
+    /**
+     * 登录
+     */
+    $('#login').on('click', function () {
+        var $username = $('#username').val();
+        var $password = $('#pwd').val();
+        var $captcha = $('#captcha').val();
+        if ($username === '') {
+            myAlert('alertTip', '文件名不能为空');
+            return false;
+        }
+        if ($password === '') {
+            myAlert('alertTip', '密码不能为空');
+            return false;
+        }
+        if ($captcha === '') {
+            myAlert('alertTip', '验证码不能为空');
+            return false;
+        }
+        // 提交
+        $.post(baseUrl + 'home/login/index' + '?rand=' + Math.random(),
+            {
+                'username': $username,
+                'password': aes_encrypt($password),
+                'captcha': $captcha
+            }, function (result) {
+                console.log(result);
+                if (result.errcode === 0) {
+                    // window.location.href = baseUrl + "home/main.html";
+                } else {
+                    // alert('登录失败');
+                    // window.location.href = baseUrl + "home/login.html";
+                }
+            }, "text"
+        );
+    });
+
 </script>
 </body>
 </html>

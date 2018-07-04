@@ -106,6 +106,6 @@ class Captcha
      */
     public function getCode()
     {
-        return strtolower($this->code);
+        return $this->code;
     }
 }
