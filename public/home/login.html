@@ -58,6 +58,27 @@
         </div>
     </div>
 </div>
+<!-- 模态框 -->
+<div class="modal fade" id="alertModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- 模态框头部 -->
+            <div class="modal-header">
+                <h4 class="modal-title">提示：</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- 模态框主体 -->
+            <div class="modal-body" id="modalBody">
+                模态框内容..
+            </div>
+            <!-- 模态框底部 -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+            </div>
+
+        </div>
+    </div>
+</div>
 <!-- Bootstrap 核心 JavaScript -->
 <script src="../static/js/jquery-3.3.1.min.js"></script>
 <script src="../static/bootstrap/4.1.1/js/bootstrap.min.js"></script>
@@ -103,12 +124,16 @@
             }, function (result) {
                 console.log(result);
                 if (result.errcode === 0) {
-                    // window.location.href = baseUrl + "home/main.html";
+                    window.location.href = baseUrl + "home/main.html";
                 } else {
-                    // alert('登录失败');
-                    // window.location.href = baseUrl + "home/login.html";
+                    $('#modalBody').html(result.errmsg);
+                    $('#alertModal').modal('show');
+                    setTimeout(function () {
+                        $('#alertModal').modal('hide');
+                        window.location.href = baseUrl + "home/login.html";
+                    }, 3000);
                 }
-            }, "text"
+            }, "json"
         );
     });
 

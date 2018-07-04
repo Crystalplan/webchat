@@ -14,7 +14,7 @@ class Login extends Validate
     protected $rule = [
         ['username', 'require|max:20', '请输入用户名|用户名不能超过20个字符'],
         ['password', 'require', '请输入密码'],
-        ['captcha', 'require|number', '请输入验证码|验证码必须为数字'],
+        ['captcha', 'require|alphaNum', '请输入验证码|验证码必须为数字'],
     ];
 
     protected $scene = [

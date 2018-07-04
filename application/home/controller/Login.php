@@ -17,7 +17,7 @@ class Login extends Base
 {
     public function __construct()
     {
-        parent::__construct();
+        parent::__construct(false);
     }
 
     /**
@@ -31,7 +31,6 @@ class Login extends Base
         $redis = redis();
         $key = $this->_captchaKey . getIp();
         $val = $captcha->getCode();
-        Log::write('============>: ' . $val);
         $redis->setex($key, 60, $val);
     }
 
@@ -41,36 +40,58 @@ class Login extends Base
     public function index()
     {
         if (request()->isAjax()) {
-            // todo
             $post = trimArray(input('post.'));
             $validate = validate('Login');
             if (!$validate->scene('index')->check($post)) {
-                echo $validate->getError();
+                $errmsg = $validate->getError();
+                $this->exitJson(1, $errmsg);
             }
             $username = $post['username'];
             $password = aes_decrypt($post['password']);
             if (!$password) {
-                $this->exitJson('密码格式不正确');
+                $this->exitJson(1, '密码格式不正确');
             }
             $captcha = $post['captcha'];
             $redis = redis();
             $captchaKey = $this->_captchaKey . getIp();
-            if ($captcha !== $redis->get($captchaKey)) {
-                $this->exitJson('验证码不正确或已失效');
+            if (strtolower($captcha) !== $redis->get($captchaKey)) {
+                $this->exitJson(3, '验证码不正确或已失效');
             }
             $redis->del($captchaKey);
             $b = new B();
-            $userRow = $b->dbGetOne('user', 'uid,password', ['username' => $username, 'status' => 1]);
+            $userRow = $b->dbGetOne('user', 'uid,username,password', ['username' => $username, 'status' => 1]);
             if (!$userRow) {
-                $this->exitJson('用户或密码不正确');
+                $this->exitJson(2, '用户或密码不正确');
             }
             if (!password_verify($password, $userRow['password'])) {
-                $this->exitJson('用户或密码不正确');
+                $this->exitJson(2, '用户或密码不正确');
             }
-            $this->exitJson('登录成功', 0, ['uid' => $userRow['uid']]);
+
+            unset($userRow['password']);
+            // 账号信息
+            $redis->hMset($this->_userInfoKey . $userRow['uid'], $userRow);
+            $redis->expire($this->_userInfoKey . $userRow['uid'], $this->_userInfoKeyExpires);
+            // Token
+            $accessToken = $this->makeAccessToken($userRow['uid']);
+            if (!$accessToken) {
+                $this->exitJson(4, '登录失败');
+            }
+            $this->exitJson(0, '登录成功', ['uid' => $userRow['uid'], 'access_token' => $accessToken]);
         } else {
             header('Location: ' . DOMAIN . 'home/login.html');
         }
+    }
+
+    /**
+     * 登出
+     */
+    public function logout()
+    {
+        parent::checkLogin();
+        $redis = redis();
+        $redis->del($this->_accessTokenKey . $this->_loginUid);
+        $redis->del($this->_userInfoKey . $this->_loginUid);
+        $this->exitJson(0, '登出成功');
     }
 
 }
