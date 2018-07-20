@@ -5,3 +5,5 @@ composer.lock
 runtime
 application/config.php
 application/dev.php
+websocket/config.php
+public/static/js/common.js
