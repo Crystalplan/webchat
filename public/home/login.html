@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="zh-CN">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -29,114 +30,136 @@
         }
     </style>
 </head>
+
 <body>
-<div class="container">
-    <div class="card">
-        <div class="card-header text-center">
-            <img src="../static/images/home/chatIcon.jpg" alt="webchat" width="121" height="75">
-        </div>
-        <div class="card-body">
-            <div id="alertTip"></div>
-            <form>
-                <div class="form-group">
-                    <input type="username" class="form-control" id="username" placeholder="用户名">
-                </div>
-                <div class="form-group">
-                    <input type="password" class="form-control" id="pwd" placeholder="密码">
-                </div>
-                <div class="form-group">
-                    <input type="captcha" class="form-control" id="captcha" placeholder="验证码">
-                    <img src="#" id="captchaImg" onclick="javascript:getCaptcha(this)"/>
-                </div>
-                <div class="form-check">
-                    <label class="form-check-label">
-                        <input class="form-check-input" type="checkbox"> 记住我
-                    </label>
-                </div>
-                <button type="button" class="btn btn-primary btn-lg btn-block" id="login">登录</button>
-            </form>
-        </div>
-    </div>
-</div>
-<!-- 模态框 -->
-<div class="modal fade" id="alertModal">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <!-- 模态框头部 -->
-            <div class="modal-header">
-                <h4 class="modal-title">提示：</h4>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
+    <div class="container">
+        <div class="card">
+            <div class="card-header text-center">
+                <img src="../static/images/home/chatIcon.jpg" alt="chat" width="121" height="75">
             </div>
-            <!-- 模态框主体 -->
-            <div class="modal-body" id="modalBody">
-                模态框内容..
+            <div class="card-body">
+                <div id="alertTip"></div>
+                <form>
+                    <div class="form-group">
+                        <input type="username" class="form-control" id="username" placeholder="用户名">
+                    </div>
+                    <div class="form-group">
+                        <input type="password" class="form-control" id="pwd" placeholder="密码">
+                    </div>
+                    <div class="form-group">
+                        <input type="captcha" class="form-control" id="captcha" placeholder="验证码">
+                        <img src="#" id="captchaImg" onclick="javascript:getCaptcha(this)" />
+                    </div>
+                    <div class="form-check">
+                        <label class="form-check-label">
+                            <input class="form-check-input" type="checkbox" id="isRemember"> 记住我
+                        </label>
+                    </div>
+                    <button type="button" class="btn btn-primary btn-lg btn-block" id="login">登录</button>
+                </form>
             </div>
-            <!-- 模态框底部 -->
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
-            </div>
-
         </div>
     </div>
-</div>
-<!-- Bootstrap 核心 JavaScript -->
-<script src="../static/js/jquery-3.3.1.min.js"></script>
-<script src="../static/bootstrap/4.1.1/js/bootstrap.min.js"></script>
-<script src="../static/js/common.js"></script>
-<script src="../static/js/crypto-js.js"></script>
-<script>
-    $(function () {
-        getCaptcha('#captchaImg');
-    });
+    <!-- 模态框 -->
+    <div class="modal fade" id="alertModal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <!-- 模态框头部 -->
+                <div class="modal-header">
+                    <h4 class="modal-title">提示：</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <!-- 模态框主体 -->
+                <div class="modal-body" id="modalBody">
+                    模态框内容..
+                </div>
+                <!-- 模态框底部 -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+                </div>
 
-    /**
-     * 获取验证码
-     */
-    function getCaptcha($img) {
-        $($img).attr('src', baseUrl + 'home/login/getCaptcha' + '?rand=' + Math.random());
-    }
+            </div>
+        </div>
+    </div>
+    <!-- Bootstrap 核心 JavaScript -->
+    <script src="../static/js/jquery-3.3.1.min.js"></script>
+    <script src="../static/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+    <script src="../static/js/common.js"></script>
+    <script src="../static/js/crypto-js.js"></script>
+    <script>
+        var isLocal = 0;
 
-    /**
-     * 登录
-     */
-    $('#login').on('click', function () {
-        var $username = $('#username').val();
-        var $password = $('#pwd').val();
-        var $captcha = $('#captcha').val();
-        if ($username === '') {
-            myAlert('alertTip', '文件名不能为空');
-            return false;
-        }
-        if ($password === '') {
-            myAlert('alertTip', '密码不能为空');
-            return false;
-        }
-        if ($captcha === '') {
-            myAlert('alertTip', '验证码不能为空');
-            return false;
-        }
-        // 提交
-        $.post(baseUrl + 'home/login/index' + '?rand=' + Math.random(),
-            {
-                'username': $username,
-                'password': aes_encrypt($password),
-                'captcha': $captcha
-            }, function (result) {
-                console.log(result);
-                if (result.errcode === 0) {
-                    window.location.href = baseUrl + "home/main.html";
-                } else {
-                    $('#modalBody').html(result.errmsg);
-                    $('#alertModal').modal('show');
-                    setTimeout(function () {
-                        $('#alertModal').modal('hide');
-                        window.location.href = baseUrl + "home/login.html";
-                    }, 3000);
-                }
-            }, "json"
-        );
-    });
+        $(function () {
+            // 记住我
+            var localLogin = localGet(cashPrefix + 'login');
+            if (localLogin !== false) {
+                $('#username').val(localLogin.username);
+                $('#pwd').val(aesDecrypt(localLogin.password));
+                $("#isRemember").attr("checked", true);
+                isLocal = 1;
+            }
+            // 验证码
+            getCaptcha('#captchaImg');
+        });
 
-</script>
+        /**
+         * 获取验证码
+         */
+        function getCaptcha(img) {
+            $(img).attr('src', baseUrl + 'home/login/getCaptcha' + '?rand=' + Math.random());
+        }
+
+        /**
+         * 登录
+         */
+        $('#login').on('click', function () {
+            var username = $('#username').val();
+            var password = $('#pwd').val();
+            var captcha = $('#captcha').val();
+            var isRemember = $('#isRemember').is(':checked') === true ? 1 : 0;
+            if (username === '') {
+                myAlert('alertTip', '文件名不能为空');
+                return false;
+            }
+            if (password === '') {
+                myAlert('alertTip', '密码不能为空');
+                return false;
+            }
+            if (captcha === '') {
+                myAlert('alertTip', '验证码不能为空');
+                return false;
+            }
+            // 提交
+            var paramObj = {
+                'username': username,
+                'password': aesEncrypt(password),
+                'captcha': captcha,
+                'rtime': curTime
+            };
+            paramObj.sign = makeSign(paramObj);
+            $.post(baseUrl + 'home/login/index',
+                paramObj
+                , function (result) {
+                    if (result.errcode === 0) {
+                        var infoStr = JSON.stringify(result.data);
+                        sessionStorage.setItem(cashPrefix + 'userInfo', infoStr);
+                        if (isLocal === 0 && isRemember === 1) {
+                            localSetex(cashPrefix + 'login', JSON.stringify({ username: username, password: aesEncrypt(password) }), 7 * 86400);
+                        }
+                        window.location.href = baseUrl + "home/main.html";
+                    } else {
+                        $('#modalBody').html(result.errmsg);
+                        $('#alertModal').modal('show');
+                        setTimeout(function () {
+                            $('#alertModal').modal('hide');
+                            window.location.href = baseUrl + "home/login.html";
+                        }, 3000);
+                    }
+                }, "json"
+            );
+        });
+
+    </script>
 </body>
+
 </html>

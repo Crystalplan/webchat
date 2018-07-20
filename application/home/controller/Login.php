@@ -11,7 +11,6 @@ namespace app\home\controller;
 
 use \captcha\Captcha;
 use app\home\model\Base as B;
-use think\Log;
 
 class Login extends Base
 {
@@ -40,6 +39,7 @@ class Login extends Base
     public function index()
     {
         if (request()->isAjax()) {
+            parent::validateSign();
             $post = trimArray(input('post.'));
             $validate = validate('Login');
             if (!$validate->scene('index')->check($post)) {
@@ -92,6 +92,15 @@ class Login extends Base
         $redis->del($this->_accessTokenKey . $this->_loginUid);
         $redis->del($this->_userInfoKey . $this->_loginUid);
         $this->exitJson(0, '登出成功');
+    }
+
+    /**
+     * 检查登录
+     */
+    public function checkLogin()
+    {
+        parent::checkLogin();
+        $this->exitJson(0, '成功');
     }
 
 }

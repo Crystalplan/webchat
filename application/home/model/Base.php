@@ -48,10 +48,7 @@ class Base extends Model
         if ($limit !== '') {
             $db->limit($limit);
         }
-        $res = $db->where($where)->update($update);
-        echo $db->getLastSql();
-        exit;
-        // return $res;
+        return $db->where($where)->update($update);
     }
 
     /**

@@ -119,4 +119,33 @@ class Base extends Controller
         }
         return $userInfo;
     }
+
+    /**
+     * 检查接口签名及相关参数
+     * @return true/exit json
+     */
+    protected function validateSign()
+    {
+        $passArr = [
+            '/home/login/getCaptcha',
+            '/home/login/logout',
+            '/home/login/checkLogin'
+        ];
+        if (!request()->isAjax() || in_array($_SERVER['REQUEST_URI'], $passArr)) {
+            return true;
+        }
+        // 校验
+        $post = trimArray(input('post.'));
+        if (!isset($post['rtime']) || !is_numeric($post['rtime'])) {
+            $this->exitJson(1, '请正确输入rtime');
+        }
+        if (!isset($post['sign']) || !is_string($post['sign']) || strlen($post['sign']) !== 32) {
+            $this->exitJson(1, '请正确输入sign');
+        }
+        $makeSign = makeSign($post, config('sign_key'));
+        if ($makeSign !== $post['sign']) {
+            $this->exitJson(6, '数据签名错误');
+        }
+        return true;
+    }
 }
