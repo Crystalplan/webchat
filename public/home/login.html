@@ -130,32 +130,31 @@
                 return false;
             }
             // 提交
-            var paramObj = {
-                'username': username,
-                'password': aesEncrypt(password),
-                'captcha': captcha,
-                'rtime': curTime
-            };
-            paramObj.sign = makeSign(paramObj);
-            $.post(baseUrl + 'home/login/index',
-                paramObj
-                , function (result) {
-                    if (result.errcode === 0) {
-                        var infoStr = JSON.stringify(result.data);
-                        sessionStorage.setItem(cashPrefix + 'userInfo', infoStr);
-                        if (isLocal === 0 && isRemember === 1) {
-                            localSetex(cashPrefix + 'login', JSON.stringify({ username: username, password: aesEncrypt(password) }), 7 * 86400);
-                        }
-                        window.location.href = baseUrl + "home/main.html";
-                    } else {
-                        $('#modalBody').html(result.errmsg);
-                        $('#alertModal').modal('show');
-                        setTimeout(function () {
-                            $('#alertModal').modal('hide');
-                            window.location.href = baseUrl + "home/login.html";
-                        }, 3000);
+            var data = {
+                'url': 'home/login/index',
+                'param': {
+                    'username': username,
+                    'password': aesEncrypt(password),
+                    'captcha': captcha
+                }
+            }
+            myAjax(data, function (result) {
+                if (result.errcode === 0) {
+                    var infoStr = JSON.stringify(result.data);
+                    sessionStorage.setItem(cashPrefix + 'userInfo', infoStr);
+                    if (isLocal === 0 && isRemember === 1) {
+                        localSetex(cashPrefix + 'login', JSON.stringify({ username: username, password: aesEncrypt(password) }), 7 * 86400);
                     }
-                }, "json"
+                    window.location.href = baseUrl + "home/main.html";
+                } else {
+                    $('#modalBody').html(result.errmsg);
+                    $('#alertModal').modal('show');
+                    setTimeout(function () {
+                        $('#alertModal').modal('hide');
+                        window.location.href = baseUrl + "home/login.html";
+                    }, 3000);
+                }
+            }, 0
             );
         });
 

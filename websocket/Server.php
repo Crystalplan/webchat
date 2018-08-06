@@ -23,7 +23,7 @@ class Server
             [
                 'worker_num' => 4,
                 'task_worker_num' => 8,
-                'daemonize' => false,
+                'daemonize' => true,
                 'log_file' => '/data/logs/swoole/error/' . LOG_NAME
             ]
         );

@@ -13,12 +13,12 @@ use think\Log;
 
 class Base extends Controller
 {
-    protected $_captchaKey = 'chat:home:captcha:';//验证码前缀
-    protected $_accessTokenKey = 'chat:home:access_token:'; //access_token前缀
-    protected $_accessTokenKeyExpires = 3600; //有效时间，秒
-    protected $_userInfoKey = 'chat:home:user:info:'; //user info前缀
-    protected $_userInfoKeyExpires = 86400; //有效时间，秒
-    protected $_loginUid = 0;
+    protected $captchaKey = 'chat:home:captcha:';//验证码前缀
+    protected $accessTokenKey = 'chat:home:access_token:'; //access_token前缀
+    protected $accessTokenKeyExpires = 3600; //有效时间，秒
+    protected $userInfoKey = 'chat:home:user:info:'; //user info前缀
+    protected $userInfoKeyExpires = 86400; //有效时间，秒
+    protected $loginUid = 0;
 
     public function __construct($loginFlag = true)
     {
@@ -66,7 +66,7 @@ class Base extends Controller
         $data_arr['sign'] = makeSign($data_arr, config('token_key'));
         $accessToken = aes_encrypt(json_encode($data_arr), config('token_key'));
         $redis = redis();
-        $redis->setex($this->_accessTokenKey . $uid, $this->_accessTokenKeyExpires, $rand);
+        $redis->setex($this->accessTokenKey . $uid, $this->accessTokenKeyExpires, $rand);
         return $accessToken;
     }
 
@@ -88,19 +88,20 @@ class Base extends Controller
         if (!isset($tokenArr['id']) || !is_numeric($tokenArr['id']) || !isset($tokenArr['ip'])) {    // $tokenArr['ip'] != getIp()
             $this->exitJson(5, '无效的凭证');
         }
-        $this->_loginUid = $tokenArr['id'];
+        $this->loginUid = $tokenArr['id'];
+        Log::write('F: ' . __FUNCTION__ . ', uid: ' . $tokenArr['id']);
         //距离签发时间超过1天，务必重新获取
         if (time() - $tokenArr['iat'] >= 86400) {
             $this->exitJson(5, '无效的凭证');
         }
         //
         $redis = redis();
-        $tokenCache = $redis->get($this->_accessTokenKey . $tokenArr['id']);
+        $tokenCache = $redis->get($this->accessTokenKey . $tokenArr['id']);
         if (!$tokenCache || !isset($tokenArr['rand']) || $tokenCache != $tokenArr['rand']) {
             $this->exitJson(5, '无效的凭证');
         }
         //刷新过期时间
-        $redis->expire($this->_accessTokenKey . $tokenArr['id'], $this->_accessTokenKeyExpires);
+        $redis->expire($this->accessTokenKey . $tokenArr['id'], $this->accessTokenKeyExpires);
     }
 
     /**
@@ -109,11 +110,11 @@ class Base extends Controller
      */
     protected function getUserInfo()
     {
-        if ($this->_loginUid === 0) {
+        if ($this->loginUid === 0) {
             $this->exitJson(5, '无效的凭证');
         }
         $redis = redis();
-        $userInfo = $redis->hGetAll($this->_userInfoKey . $this->_loginUid);
+        $userInfo = $redis->hGetAll($this->userInfoKey . $this->loginUid);
         if (!$userInfo) {
             $this->exitJson(5, '无效的凭证');
         }

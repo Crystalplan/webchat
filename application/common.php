@@ -9,6 +9,16 @@
 // | Author: 流年 <liu21st@gmail.com>
 // +----------------------------------------------------------------------
 
+//
+define('DOMAIN', 'http://chat.crystalsky.top/');
+define('FILES_DOMAIN', 'http://files.crystalsky.top/');
+// 定义数据表常量
+define('DB_USER', 'user');
+define('DB_GROUP', 'group');
+define('DB_USER_GROUP', 'user_group');
+define('DB_FGROUP', 'fgroup');
+define('DB_USER_FRIEND', 'user_friend');
+
 // 应用公共文件
 
 if (!function_exists('trimArray')) {

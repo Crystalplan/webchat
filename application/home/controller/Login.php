@@ -28,7 +28,7 @@ class Login extends Base
         $captcha->doimg();
         // 验证码保存到redis中
         $redis = redis();
-        $key = $this->_captchaKey . getIp();
+        $key = $this->captchaKey . getIp();
         $val = $captcha->getCode();
         $redis->setex($key, 60, $val);
     }
@@ -53,7 +53,7 @@ class Login extends Base
             }
             $captcha = $post['captcha'];
             $redis = redis();
-            $captchaKey = $this->_captchaKey . getIp();
+            $captchaKey = $this->captchaKey . getIp();
             if (strtolower($captcha) !== $redis->get($captchaKey)) {
                 $this->exitJson(3, '验证码不正确或已失效');
             }
@@ -69,8 +69,8 @@ class Login extends Base
 
             unset($userRow['password']);
             // 账号信息
-            $redis->hMset($this->_userInfoKey . $userRow['uid'], $userRow);
-            $redis->expire($this->_userInfoKey . $userRow['uid'], $this->_userInfoKeyExpires);
+            $redis->hMset($this->userInfoKey . $userRow['uid'], $userRow);
+            $redis->expire($this->userInfoKey . $userRow['uid'], $this->userInfoKeyExpires);
             // Token
             $accessToken = $this->makeAccessToken($userRow['uid']);
             if (!$accessToken) {
@@ -89,8 +89,8 @@ class Login extends Base
     {
         parent::checkLogin();
         $redis = redis();
-        $redis->del($this->_accessTokenKey . $this->_loginUid);
-        $redis->del($this->_userInfoKey . $this->_loginUid);
+        $redis->del($this->accessTokenKey . $this->loginUid);
+        $redis->del($this->userInfoKey . $this->loginUid);
         $this->exitJson(0, '登出成功');
     }
 

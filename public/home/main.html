@@ -34,7 +34,6 @@
 
         #sendArea .w-e-text-container {
             height: 120px !important;
-            ;
         }
 
         #sendFormGroup .btn-group {
@@ -51,8 +50,8 @@
     <div class="container">
         <div class="card" id="mainCard">
             <div class="card-header text-left bg-primary text-white" id="mainCardHeader">
-                <img src="../static/images/home/chatIcon.jpg" alt="chat" width="121" height="75">
-                <span class="text-center">CrystalSky</span>
+                <img src="../static/images/home/chatIcon.jpg" alt="chat" width="121" height="75" id="userImg" />
+                <span class="text-center username"></span>
             </div>
             <div class="card-body" id="mainCardBody">
                 <div id="accordion">
@@ -64,55 +63,8 @@
                         </div>
                         <div id="collapseOne" class="collapse" data-parent="#accordion">
                             <div class="card-body">
-                                #1 内容：
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-header">
-                            <a class="collapsed card-link" data-toggle="collapse" href="#collapseTwo">
-                                分组二
-                            </a>
-                        </div>
-                        <div id="collapseTwo" class="collapse" data-parent="#accordion">
-                            <div class="card-body">
-                                #2 内容：
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-header">
-                            <a class="collapsed card-link" data-toggle="collapse" href="#collapseThree">
-                                分组三
-                            </a>
-                        </div>
-                        <div id="collapseThree" class="collapse" data-parent="#accordion">
-                            <div class="card-body">
-                                #3 内容：
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-header">
-                            <a class="collapsed card-link" data-toggle="collapse" href="#collapseFour">
-                                分组四
-                            </a>
-                        </div>
-                        <div id="collapseFour" class="collapse" data-parent="#accordion">
-                            <div class="card-body">
-                                #4 内容：
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-header">
-                            <a class="collapsed card-link" data-toggle="collapse" href="#collapseFive">
-                                分组五
-                            </a>
-                        </div>
-                        <div id="collapseFive" class="collapse" data-parent="#accordion">
-                            <div class="card-body">
-                                #5 内容：
+                                <img src="../static/images/home/chatIcon.jpg" alt="chat" width="60" height="45" class="userImg" />
+                                <lable>张三</lable>
                             </div>
                         </div>
                     </div>
@@ -124,7 +76,8 @@
                         </div>
                         <div id="collapseSix" class="collapse" data-parent="#accordion">
                             <div class="card-body">
-                                #6 内容：
+                                <img src="../static/images/home/chatIcon.jpg" alt="chat" width="60" height="45" class="userImg" />
+                                <lable>李四</lable>
                             </div>
                         </div>
                     </div>
@@ -132,32 +85,32 @@
             </div>
         </div>
 
-        <div class="card" id="chatCard">
-            <div class="card-header text-left bg-dark text-white" id="chatCardHeader">
-                <span class="text-center">正在与叶良辰进行对话</span>
-            </div>
-            <div class="card-body" id="chatCardBody">
-                <form>
-                    <div class="form-group">
-                        <textarea class="form-control" rows="5" id="chatArea" readonly="readonly">
-                        Hello World!
-                    </textarea>
-                    </div>
-                </form>
-                <form>
-                    <div class="form-group" id="sendFormGroup">
-                        <div id="sendArea">
-                            <p>欢迎使用
-                                <b>wangEditor</b> 富文本编辑器</p>
-                        </div>
-                        <div class="btn-group">
-                            <button type="button" class="btn">关闭</button>
-                            <button type="button" class="btn btn-primary">发送</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
+        <!-- <div class="card" id="chatCard">
+        <div class="card-header text-left bg-dark text-white" id="chatCardHeader">
+            <span class="text-center">正在与叶良辰进行对话</span>
         </div>
+        <div class="card-body" id="chatCardBody">
+            <form>
+                <div class="form-group">
+                    <textarea class="form-control" rows="5" id="chatArea" readonly="readonly">
+                    Hello World!
+                </textarea>
+                </div>
+            </form>
+            <form>
+                <div class="form-group" id="sendFormGroup">
+                    <div id="sendArea">
+                        <p>欢迎使用
+                            <b>wangEditor</b> 富文本编辑器</p>
+                    </div>
+                    <div class="btn-group">
+                        <button type="button" class="btn">关闭</button>
+                        <button type="button" class="btn btn-primary">发送</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div> -->
         <script src="../static/js/jquery-3.3.1.min.js"></script>
         <script src="../static/bootstrap/4.1.1/js/bootstrap.min.js"></script>
         <script type="text/javascript" src="../static/wangEditor/3.1.1/wangEditor.min.js"></script>
@@ -167,9 +120,13 @@
             $(function () {
                 wangEditorInit();
                 websocket();
+                getUserInfo();
+                getUserFgroups();
             });
 
-            // wangEditor
+            /**
+             * wangEditor
+             */
             function wangEditorInit() {
                 var E = window.wangEditor;
                 var editor = new E('#sendArea');// 或者 var editor = new E( document.getElementById('sendArea') )
@@ -187,7 +144,9 @@
                 editor.create();
             }
 
-            // websocket
+            /**
+             * websocket
+             */
             function websocket() {
                 if ("WebSocket" in window) {
                     var ws = new WebSocket("ws://" + serverIp + ":9501"); // 打开一个 web socket
@@ -219,6 +178,66 @@
                 }
             }
 
+            /**
+             * 获取用户资料
+             */
+            function getUserInfo() {
+                var data = {
+                    'url': 'home/user/getInfo',
+                    'param': {}
+                };
+                myAjax(data, function (result) {
+                    if (result.errcode !== 0) {
+                        alert(result.errmsg);
+                        return false;
+                    }
+                    var data = result.data;
+                    $("#userImg").attr('src', data.image);
+                    $("#mainCardHeader .username").text(data.username);
+                });
+            }
+
+            /**
+             * 获取用户分组
+             */
+            function getUserFgroups() {
+                var data = {
+                    'url': 'home/fgroup/getList',
+                    'param': {}
+                };
+                myAjax(data, function (result) {
+                    if (result.errcode !== 0) {
+                        alert(result.errmsg);
+                        return false;
+                    }
+                    var data = result.data;
+                    var domain = result.domain;
+                    var accordionHtml = '';
+                    var fgidArr = Object.keys(data);
+                    for (var i = 0; i < fgidArr.length; i++) {
+                        accordionHtml += '<div class="card">' +
+                            '<div class="card-header">' +
+                            '<a class="card-link" data-toggle="collapse" href="#collapse' + fgidArr[i] + '">' +
+                            data[fgidArr[i]]['name'] +
+                            '</a>' +
+                            '</div>' +
+                            '<div id="collapse' + fgidArr[i] + '" class="collapse" data-parent="#accordion">' +
+                            '<div class="card-body">';
+                        var subData = data[fgidArr[i]]['subData'];
+                        for (var j = 0; j < subData.length; j++) {
+                            accordionHtml += '<div>' +
+                                '<input type="hidden" class="fuid" value="' + subData[j]['fuid'] + '">' +
+                                '<img src="' + domain + subData[j]['image'] + '" alt="chat" width="60" height="45" class="userImg" />' +
+                                '<lable>' + subData[j]['username'] + '</lable>' +
+                                '</div>';
+                        }
+                        accordionHtml += '</div>' +
+                            '</div>' +
+                            '</div>';
+                    }
+                    $('#accordion').html(accordionHtml);
+                });
+            }
         </script>
 </body>
 
